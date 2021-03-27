@@ -28,6 +28,7 @@ proctype Phil () {
 		// EAT		
 		printf("philosopher %d eats ...\n" , _pid );
 
+		
 		/* put the two forks down */
 
 		forks[LEFT] = 0;
