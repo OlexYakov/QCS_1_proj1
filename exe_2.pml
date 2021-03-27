@@ -6,10 +6,10 @@ active [2] proctype P ()
 {
 non_cs :
 	
-	if
-	:: skip;
-	:: true -> end: (false);
-	fi
+	//if
+	//:: skip;
+	//:: true -> end: (false);
+	//fi
 
 	flag [ _pid ] = 1; 						/* wants to enter critical section */
 	turn = 1 - _pid ;						/* politely give turn to the other one */
