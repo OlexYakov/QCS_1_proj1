@@ -3,6 +3,8 @@
 # define RIGHT _pid % N
 # define FK(a) ((_pid - (a)) % N)
 
+byte c[N];
+
 int forks[N];
 
 bool flag[N*2];
@@ -38,12 +40,15 @@ proctype Phil () {
 	
 		do
 		::	lock(LEFT) -> 
+				c[LEFT]++;
 				atomic {
 					(forks[LEFT] == 0);
+					assert(c[LEFT] == 1);
 					forks[LEFT] = _pid;
 					nforks++;
 					unlock(LEFT);
 				}
+				c[LEFT]--;
 		::	lock(RIGHT) ->
 				atomic {
 					(forks[RIGHT] == 0);
