@@ -68,7 +68,9 @@ proctype Phil () {
 
 init {
 	byte i;
-	for (i : 0 .. N-1){
-		run Phil();
+	atomic {
+		for (i : 0 .. N-1){
+			run Phil();
+		}
 	}
 }
