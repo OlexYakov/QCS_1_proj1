@@ -26,6 +26,8 @@ proctype Phil () {
 		od
 		
 		// EAT		
+		//assert(forks[LEFT] == _pid);	// Question 4
+		//assert(forks[RIGHT] == _pid);	// Question 4
 		assert(forks[LEFT] == _pid && forks[RIGHT] == _pid);
 		printf("philosopher %d eats ...\n" , _pid );
 		
