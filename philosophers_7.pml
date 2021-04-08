@@ -35,14 +35,16 @@ proctype Phil () {
 		
 		/* pick up left and right forks if available */
 		short nforks = 0;
-	
+
 		do
-		::	lock(LEFT) -> 
+		::	forks[LEFT] != _pid -> 
+				lock(LEFT);
 				(forks[LEFT] == 0);
 				forks[LEFT] = _pid;
 				nforks++;
 				
-		::	lock(RIGHT) ->
+		::	forks[RIGHT] != _pid ->
+				lock(RIGHT);
 				(forks[RIGHT] == 0);
 				forks[RIGHT] = _pid;
 				nforks++;

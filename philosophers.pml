@@ -35,7 +35,7 @@ proctype Phil () {
 
 		forks[LEFT] = 0;
 		forks[RIGHT] = 0;
-
+	
 	od
 }
 
