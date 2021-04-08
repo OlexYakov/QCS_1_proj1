@@ -205,14 +205,14 @@ The verify option ended on an invalid end state, but when run with the -E flag (
 ## Question 8
 
 In order to test for deadlock freedom, we simply used Spin's verify with invalid end states turned on. Using this configuration if the processes are blocked and haven't reached the closing brackets(end state), Spin will produce a invalid end state error. Since in our model there are no acceptable states for a process to block on, we don't need end labels.
-We tested it against our current model and got a invalid end state error. After some consideration, we realized this happened because while accessing each fork was mutually exclusive, the order in which the forks where accessed was random and there was nothing stoping a process of getting permanently stuck waiting for access to a fork if another process didn't release it. It was therefore possible to reach a deadlock where processes were all blocking each other.
+We tested it against our current model and got a invalid end state error. After some consideration, we realized this happened because while accessing each fork was mutually exclusive, the order in which the forks where accessed was random and there was nothing stopping a process of getting permanently stuck waiting for access to a fork if another process didn't release it. It was therefore possible to reach a deadlock where processes were all blocking each other.
 
 ## Question 9
-To avoid deadlocks, we decided to implement an order on the avaiable forks and make it so that all philosophers pick the fork with the lowest number first, corresponding to their position.
+To avoid deadlocks, we decided to implement an order on the available forks and make it so that all philosophers pick the fork with the lowest number first, corresponding to their position.
 
 Here is a diagram for better visualization:
 
 ![Diagram of Philosophers and forks](diagram.png)
 
-By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be avaiable, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.
+By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be available, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.
 ## Question 10
