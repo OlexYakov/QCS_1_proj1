@@ -1,7 +1,7 @@
-never starvation {    /* !(<> ((eaten>=0))) */
+never starvation {    /* !(<> ((eaten>=2))) */
 accept_init:
 T0_init:
 	do
-	:: (! (((eaten>=0)))) -> goto T0_init
+	:: (! (((eaten>=2)))) -> goto T0_init
 	od;
 }

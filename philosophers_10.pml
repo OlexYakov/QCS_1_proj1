@@ -5,7 +5,7 @@
 
 bool have_eaten[N];
 int eaten;
-ltl starvation { <>(eaten >= 1)}
+ltl starvation { <>(eaten >= 2)}
 
 int forks[N];
 
