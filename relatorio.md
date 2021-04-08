@@ -229,7 +229,9 @@ if
         second = LEFT;
 fi
 ```
-By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be avaiable, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them. For the cases where a philospher can be stuck thinking, we implemented the method used in question 2.
+By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Due to this, there will uphold the property that some philosophers that want to eat will eventually do so.
+
+This will also uphold the property of them being silent, since there is no need for communication between them. For the cases where a philospher can be stuck thinking, we implemented the method used in question 2. However, because it's not a full deadlock, we had to implement the end label, to show that if the philosopher ends up on that line it ends the process, as intended, so that Spin doesn't attribute an invalid end state error.
 
 ```
 // THINK
@@ -246,6 +248,4 @@ By making this, all the philosophers will pick up the left fork, with the except
     /* pick up left and right forks if available */
     short nforks = 0;
 ```
-
-By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be available, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.
 ## Question 10
