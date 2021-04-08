@@ -75,5 +75,11 @@ In conlusion, both properties were violated. Philosopher 4 took used a fork that
 ## Question 8
 
 ## Question 9
+To avoid deadlocks, we decided to implement an order on the avaiable forks and make it so that all philosophers pick the fork with the lowest number first, corresponding to their position.
 
+Here is a diagram for better visualization:
+
+![Diagram of Philosophers and forks](diagram.png)
+
+By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be avaiable, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.
 ## Question 10
