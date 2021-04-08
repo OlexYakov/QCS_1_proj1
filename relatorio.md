@@ -16,6 +16,27 @@ Peterson's solution (for two processes) achieves _mutual exclusion_ in a critica
 The philosophers are modeled by processes, and the forks are modeled by a global integer array _forks_, of size N, such that a philosopher with PID _p_ holding fork _i_ is represented as _forks_[ _i_ ] = _p_.
 To be fair and let all philosophers sit at the table at the same time, we start all the processes atomically in the _init_ function.
 
+```
+# define N 5
+# define LEFT _pid - 1
+# define RIGHT _pid % N
+
+int forks[N];
+
+proctype Phil () {
+...
+}
+
+init {
+	byte i;
+	atomic {
+		for (i : 0 .. N-1){
+			run Phil();
+		}
+	}
+}
+```
+
 The model has two possible states for each philosopher: thinking and eating. To go from thinking to eating the philosopher must pick up two forks, one at each side.
 
 Our first attempt lets the philosopher pick a fork on his left or right, at random, but he can only eat when both forks are in his possession. We implemented this with a do loop with three (possibly blocking) alternatives, corresponding the following options:
@@ -23,6 +44,41 @@ Our first attempt lets the philosopher pick a fork on his left or right, at rand
 1. if free, pick the left fork
 2. if free, pick the right fork
 3. if has both forks, proceed to eat
+
+The corresponding code:
+
+```
+proctype Phil(){
+    do
+	::
+		// THINK
+		printf("philosopher %d thinks ...\n" , _pid );
+		
+		short nforks = 0;
+		/* pick up left and right forks if available */
+		do
+		::	forks[LEFT] == 0 -> 
+				forks[LEFT] = _pid;
+				nforks++;
+		::	forks[RIGHT] == 0 ->
+				forks[RIGHT] = _pid;
+				nforks++;
+		::	nforks == 2 -> break;
+		od
+		
+		// EAT		
+		printf("philosopher %d eats ...\n" , _pid );
+		
+		/* put the two forks down */
+		forks[LEFT] = 0;
+		forks[RIGHT] = 0;
+	
+	od
+}
+```
+
+The idea is that the philosophers only pick up a fork if no one is holding it - in practice we have a guard (ex: `forks[LEFT] == 0`) that blocks the action of assigning the fork the current philosopher (ex: `forks[LEFT] = _pid`). The loop can only break if the number of forks held is two.
+As expected, the output _seems_ to be correct, but as the following questions will demonstrate it is not. This is because the evaluation of the guard and the execution of the guarded statements is not an atomic operation, meaning that two or more philosophers could evaluate the guard to `true` before any of them had time to claim ownership.
 
 ## Question 5 and 6
 Correctness properties:
@@ -49,28 +105,29 @@ After examining the detailed output from the guided run option the problem was e
 
 ```
 Process  | n.forks |       forks        |                                         
-              P5   | [0] [1] [2] [3] [4]| 
-----------------------------------------|                   
-5 Phil:       0    |  5   2   3   4   0 |         
-5 Phil:       1    |  5   2   3   4   0 |         
-5 Phil:       1    |  5   2   3   4   0 |         <-- Process 5 acquired left fork 4
-4 Phil:       1    |  5   2   3   4   5 |         <-- Process 4 acquired right fork 4 even if held by 5
-5 Phil:       1    |  5   2   3   4   4 |         <-- Process 5 still thinks he has two forks, increments n. forks to 2
-4 Phil:       2    |  5   2   3   4   4 |         
-5 Phil:       2    |  5   2   3   4   4 |         
+              P5   |[0] [1] [2] [3] [4]| 
+---------------------------------------|                   
+5 Phil:       0    | 5   2   3   4   0 |         
+5 Phil:       1    | 5   2   3   4   0 |         
+5 Phil:       1    | 5   2   3   4   0 |    <-- Process 5 acquired left fork 4
+4 Phil:       1    | 5   2   3   4   5 |    <-- Process 4 acquired right fork 4 even if held by 5
+5 Phil:       1    | 5   2   3   4   4 |    <-- Process 5 still thinks he has two forks, increments n. forks to 2
+4 Phil:       2    | 5   2   3   4   4 |         
+5 Phil:       2    | 5   2   3   4   4 |         
 spin: philosophers.pml:31, Error: assertion violated
 spin: text of failed assertion: assert(((forks[(_pid-1)]==_pid)&&(forks[(_pid%5)]==_pid)))
                                         ...
 ```
-(the output is slightly modified to fit the screen)
+_(the output is slightly modified to fit the screen)_
 
-As we can see, no synchronization means that even tough there is a guard (forks[_pid] == 0) we do not have mutual exclusion. 
-Both process 4 and 5 checked the guard and saw that fork 4 was free, and both went into the guarded statements.
+As we can see, no synchronization means that even tough there is a guard (`forks[LEFT] == 0`) we do not have mutual exclusion. 
+Both process 4 and 5 checked the guard and saw that fork 4 was free, and both went into the guarded statements, as predicted.
 Philosopher 5 claimed ownership and that was overridden right away by Philosopher 4.
 
-In conclusion, both properties were violated. Philosopher 4 took used a fork that was already in use (property 1) and Philosopher 5 was ready to eat even though he didn't have both forks.
+In conclusion, both properties were violated. Philosopher 4 took a fork that was already in use (property 1) and Philosopher 5 was ready to eat even though he didn't have both forks (property 2).
+
 ## Question 7
-In this iteration of the program we implemented mutual exclusion for each fork.
+In this iteration of the program we implemented mutual exclusion for each fork resource.
 Initially we thought that this was a problem of synchronization between N processes, but even though each fork is a shared resource, it is only ever accessed by two philosophers. This means that what we have is many instances of synchronization for N=2 processes, which can be solved with the provided Peterson's algorithm.
 
 We implemented two functions, `lock(n)` and `unlock(n)`, that as the names suggest, create a critical region accessible only by the processes that currently holds the lock. This way each philosopher has to acquire the lock _n_ before picking up the fork _n_.
