@@ -200,14 +200,15 @@ With this solution the random simulation output was one of the two:
 * depth-limit reached: we tried with MAX_STEPS 2500 and MAX_DEPTH 200_000 and there were no deadlocks (so far) and no assertion violations.
 
 The verify option ended on an invalid end state, but when run with the -E flag (disables invalid end state checks) we always had the max depth too small error, but no assertions error.
+
+This means that we achieved the _safety property_ of _mutual exclusion_ in respect to the forks.
 ...
 
 ## Question 8
 
-In order to test for deadlock freedom, we simply used Spin's verify with invalid end states turned on. Using this configuration if the processes are blocked and haven't reached the closing brackets(end state), Spin will produce a invalid end state error. Since in our model there are no acceptable states for a process to block on, we don't need end labels.
-
-We tested it against our current model and got a invalid end state error. After some consideration, we realized this happened because while accessing each fork was mutually exclusive, the order in which the forks where accessed was random and there was nothing stoping a process of getting permanently stuck waiting for access to a fork if another process didn't release it. It was therefore possible to reach a deadlock where processes were all blocking each other.
-
+In order to test for deadlock freedom, we simply used Spin's verify with invalid end states turned on. Using this configuration if the processes are blocked and haven't reached the closing brackets (end state), Spin will produce a invalid end state error. Since in our model there are no acceptable states for a process to block on, we don't need end labels.
+We tested it against our current model and got a invalid end state error. After some consideration, we realized this happened because while accessing each fork was mutually exclusive, the order in which the forks where accessed was random and there was nothing stopping a process of getting permanently stuck waiting for access to a fork if another process didn't release it.
+It was therefore possible to reach a deadlock where processes were all blocking each other: for example, a situation where everyone is holding the left fork.
 
 ## Question 9
 To avoid deadlocks, we decided to implement an order on the available forks and make it so that all philosophers pick the fork with the lowest number first, corresponding to their position.
@@ -216,7 +217,35 @@ Here is a diagram for better visualization:
 
 ![Diagram of Philosophers and forks](diagram.png)
 
-By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be available, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.
+And here is the corresponding code:
+```
+byte first;
+byte second;
+if 
+::	(LEFT < RIGHT) -> 
+        first = LEFT;
+        second = RIGHT;
+::	else ->
+        first = RIGHT;
+        second = LEFT;
+fi
+```
+By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Due to this, there will be a competition between philosopher 1 and 5, where the first  one that picks the fork will be able to eat, which will then uphold the property that some philosophers that want to eat will eventually do so.
 
+This will also uphold the property of them being silent, since there is no need for communication between them. For the cases where a philosopher can be stuck thinking, we implemented the method used in question 2. However, because it's not a full deadlock, we had to implement the end label, to show that if the philosopher ends up on that line it ends the process, as intended, so that Spin doesn't attribute an invalid end state error.
+
+```
+// THINK
+printf("philosopher %d thinks ...\n" , _pid );
+
+if
+:: skip;
+:: skip;
+:: true -> end: (false);
+fi
+
+/* pick up left and right forks if available */
+short nforks = 0;
+```
 
 ## Question 10
