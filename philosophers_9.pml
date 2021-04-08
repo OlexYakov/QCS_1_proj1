@@ -53,12 +53,10 @@ proctype Phil () {
 		short nforks = 0;
 		
 		lock(first)
-		(forks[first] == 0);
 		forks[first] = _pid;
 		nforks++;
 	
 		lock(second)
-		(forks[second] == 0);
 		forks[second] = _pid;
 		nforks++;
 		
