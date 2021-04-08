@@ -253,3 +253,6 @@ short nforks = 0;
 ```
 
 ## Question 10
+
+Weak fairness does not affect the correctness properties of our model. The first property that states that "there may never be any single fork being held by more than one philosopher simultaneously" is assured by our locks, since, because of them, there can only be one process having access to a fork no matter how it is scheduled. The second property, "every philosopher only eats when holding both the left and the right fork",  is true because to eat a process must acquire access to both its left and right forks, passing both locks.
+Mutual exclusion is also ensured by the locks, regardless of how the processes are scheduled. Lastly, deadlock freedom is ensured because the rules stated in question 9 in conjunction with the mutual exclusion ensure that at least one process will always be executing.
