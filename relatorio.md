@@ -11,7 +11,7 @@ Peterson's solution (for two processes) achieves _mutual exclusion_ in a critica
 
 ## Question 2
 
-In order model the processes stoping, possibly for an unlimited period, we implemented an if statement with two possible branches. The first branch has a skip statement, allowing for the process to continue as normal and request access to the critical region. The second statement stop the process using the logical statement (false). This means that each loop, because of Promela's non-deterministic nature, the process will have a 50-50 chance of either continuing to work as normal or stoping until a timeout.
+In order model the processes stopping, possibly for an unlimited period, we implemented an if statement with two possible branches. The first branch has a skip statement, allowing for the process to continue as normal and request access to the critical region. The second statement stop the process using the logical statement (false). This means that each loop, because of Promela's non-deterministic nature, the process will have a 50-50 chance of either continuing to work as normal or stopping until a timeout.
 
 
 ## Question 3
@@ -144,6 +144,56 @@ In this iteration of the program we implemented mutual exclusion for each fork r
 Initially we thought that this was a problem of synchronization between N processes, but even though each fork is a shared resource, it is only ever accessed by two philosophers. This means that what we have is many instances of synchronization for N=2 processes, which can be solved with the provided Peterson's algorithm.
 
 We implemented two functions, `lock(n)` and `unlock(n)`, that as the names suggest, create a critical region accessible only by the processes that currently holds the lock. This way each philosopher has to acquire the lock _n_ before picking up the fork _n_.
+
+Auxiliary functions:
+```
+# define FK(a) ((_pid - (a)) % N)
+
+bool flag[N*2];
+# define MAT(i,j) flag[(i)*2+(j)]
+
+bool turn[N];
+
+inline lock(n){
+	MAT(n,FK(n)) = 1;
+	turn[n] = 1- FK(n);
+	(!MAT(n,1- FK(n)) || turn[n] == FK(n));
+	
+}
+
+inline unlock(n){
+	MAT(n,FK(n)) = 0;
+}
+```
+
+Inner loop changes: now, each philosopher acquires the lock before writing to the `forks` array
+```
+...
+proctype Phil () {
+    ...
+        // Inner loop changes
+		do
+		::	forks[LEFT] != _pid -> 
+				lock(LEFT);
+				forks[LEFT] = _pid;
+				nforks++;
+				
+		::	forks[RIGHT] != _pid ->
+				lock(RIGHT);
+				forks[RIGHT] = _pid;
+				nforks++;
+				
+		::	nforks == 2 -> break;
+		od
+	...
+
+    // Release both forks in the end   
+    unlock(LEFT);
+    unlock(RIGHT);
+	
+}
+
+```
 
 With this solution the random simulation output was one of the two: 
 * invalid-end statement : there was a deadlock
