@@ -230,22 +230,20 @@ if
         second = LEFT;
 fi
 ```
-By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be avaiable, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them. For the cases where a philospher can be stuck thinking, we implemented the method used in question 2.
+By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be available, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them. For the cases where a philosopher can be stuck thinking, we implemented the method used in question 2.
 
 ```
 // THINK
-    printf("philosopher %d thinks ...\n" , _pid );
-    
+printf("philosopher %d thinks ...\n" , _pid );
 
-    if
-    :: skip;
-    :: skip;
-    :: true -> end: (false);
-    fi
-    
-    
-    /* pick up left and right forks if available */
-    short nforks = 0;
+if
+:: skip;
+:: skip;
+:: true -> end: (false);
+fi
+
+/* pick up left and right forks if available */
+short nforks = 0;
 ```
 
 By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be available, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.

@@ -43,14 +43,12 @@ proctype Phil () {
 		// THINK
 		printf("philosopher %d thinks ...\n" , _pid );
 		
-
 		if
 		:: skip;
 		:: skip;
 		:: true -> end: (false);
 		fi
-		
-		
+
 		/* pick up left and right forks if available */
 		short nforks = 0;
 		
