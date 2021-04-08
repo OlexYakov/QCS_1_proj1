@@ -210,6 +210,7 @@ This means that we achieved the _safety property_ of _mutual exclusion_ in respe
 ## Question 8
 
 In order to test for deadlock freedom, we simply used Spin's verify with invalid end states turned on. Using this configuration if the processes are blocked and haven't reached the closing brackets (end state), Spin will produce a invalid end state error. Since in our model there are no acceptable states for a process to block on, we don't need end labels.
+
 We tested it against our current model and got a invalid end state error. After some consideration, we realized this happened because while accessing each fork was mutually exclusive, the order in which the forks where accessed was random and there was nothing stopping a process of getting permanently stuck waiting for access to a fork if another process didn't release it.
 It was therefore possible to reach a deadlock where processes were all blocking each other: for example, a situation where everyone is holding the left fork.
 
