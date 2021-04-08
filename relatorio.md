@@ -1,7 +1,10 @@
 # Report
 
 2015231448 Oleksandr Yakovlyev
+
 2017256029 Gustavo Morgado
+
+2017254040 João Ramos
 
 ## Question 1
 
