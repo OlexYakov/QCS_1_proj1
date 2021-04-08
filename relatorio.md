@@ -11,7 +11,7 @@ Peterson's solution (for two processes) achieves _mutual exclusion_ in a critica
 
 ## Question 2
 
-In order model the processes stoping, possibly for an unlimited period, we implemented an if statement with two possible branches. The first branch has a skip statement, allowing for the process to continue as normal and request access to the critical region. The second statement stop the process using the logical statement (false). This means that each loop, because of Promela's non-deterministic nature, the process will have a 50-50 chance of either continuing to work as normal or stoping until a timeout.
+In order model the processes stopping, possibly for an unlimited period, we implemented an if statement with two possible branches. The first branch has a skip statement, allowing for the process to continue as normal and request access to the critical region. The second statement stop the process using the logical statement (false). This means that each loop, because of Promela's non-deterministic nature, the process will have a 50-50 chance of either continuing to work as normal or stopping until a timeout.
 
 
 ## Question 3
@@ -145,6 +145,56 @@ Initially we thought that this was a problem of synchronization between N proces
 
 We implemented two functions, `lock(n)` and `unlock(n)`, that as the names suggest, create a critical region accessible only by the processes that currently holds the lock. This way each philosopher has to acquire the lock _n_ before picking up the fork _n_.
 
+Auxiliary functions:
+```
+# define FK(a) ((_pid - (a)) % N)
+
+bool flag[N*2];
+# define MAT(i,j) flag[(i)*2+(j)]
+
+bool turn[N];
+
+inline lock(n){
+	MAT(n,FK(n)) = 1;
+	turn[n] = 1- FK(n);
+	(!MAT(n,1- FK(n)) || turn[n] == FK(n));
+	
+}
+
+inline unlock(n){
+	MAT(n,FK(n)) = 0;
+}
+```
+
+Inner loop changes: now, each philosopher acquires the lock before writing to the `forks` array
+```
+...
+proctype Phil () {
+    ...
+        // Inner loop changes
+		do
+		::	forks[LEFT] != _pid -> 
+				lock(LEFT);
+				forks[LEFT] = _pid;
+				nforks++;
+				
+		::	forks[RIGHT] != _pid ->
+				lock(RIGHT);
+				forks[RIGHT] = _pid;
+				nforks++;
+				
+		::	nforks == 2 -> break;
+		od
+	...
+
+    // Release both forks in the end   
+    unlock(LEFT);
+    unlock(RIGHT);
+	
+}
+
+```
+
 With this solution the random simulation output was one of the two: 
 * invalid-end statement : there was a deadlock
 * depth-limit reached: we tried with MAX_STEPS 2500 and MAX_DEPTH 200_000 and there were no deadlocks (so far) and no assertion violations.
@@ -155,10 +205,12 @@ The verify option ended on an invalid end state, but when run with the -E flag (
 ## Question 8
 
 In order to test for deadlock freedom, we simply used Spin's verify with invalid end states turned on. Using this configuration if the processes are blocked and haven't reached the closing brackets(end state), Spin will produce a invalid end state error. Since in our model there are no acceptable states for a process to block on, we don't need end labels.
+
 We tested it against our current model and got a invalid end state error. After some consideration, we realized this happened because while accessing each fork was mutually exclusive, the order in which the forks where accessed was random and there was nothing stoping a process of getting permanently stuck waiting for access to a fork if another process didn't release it. It was therefore possible to reach a deadlock where processes were all blocking each other.
 
+
 ## Question 9
-To avoid deadlocks, we decided to implement an order on the avaiable forks and make it so that all philosophers pick the fork with the lowest number first, corresponding to their position.
+To avoid deadlocks, we decided to implement an order on the available forks and make it so that all philosophers pick the fork with the lowest number first, corresponding to their position.
 
 Here is a diagram for better visualization:
 
@@ -195,4 +247,5 @@ By making this, all the philosophers will pick up the left fork, with the except
     short nforks = 0;
 ```
 
+By making this, all the philosophers will pick up the left fork, with the exception of the fifth philosopher, who will try to reach the right fork. Since he is waiting for that fork to be available, the philosopher at his left will then be able to pick the other fork and eat, making it so that there will never be a situation where none of them will eat. This will also uphold the property of them being silent, since there is no need for communication between them.
 ## Question 10

@@ -39,13 +39,11 @@ proctype Phil () {
 		do
 		::	forks[LEFT] != _pid -> 
 				lock(LEFT);
-				(forks[LEFT] == 0);
 				forks[LEFT] = _pid;
 				nforks++;
 				
 		::	forks[RIGHT] != _pid ->
 				lock(RIGHT);
-				(forks[RIGHT] == 0);
 				forks[RIGHT] = _pid;
 				nforks++;
 				
