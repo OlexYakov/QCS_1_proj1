@@ -1,0 +1,4 @@
+{
+  "python-varname/tests/test_core.py": true,
+  "tests/test_core.py::test_sum": true
+}
