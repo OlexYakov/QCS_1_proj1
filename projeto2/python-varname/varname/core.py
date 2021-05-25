@@ -21,6 +21,7 @@ from .utils import (
 )
 from .ignore import IgnoreList, IgnoreType
 
+
 def varname(
         frame: int = 1,
         ignore: Optional[IgnoreType] = None,
@@ -132,6 +133,7 @@ def varname(
         )
 
     return names[0]
+
 
 def will(frame: int = 1, raise_exc: bool = True) -> Optional[str]:
     """Detect the attribute name right immediately after a function call.
@@ -291,7 +293,8 @@ def nameof(var, *more_vars,
         pos_only=True
     )
 
-def argname(arg: Any, # pylint: disable=unused-argument
+
+def argname(arg: Any,  # pylint: disable=unused-argument
             *more_args: Any,
             # *, keyword-only argument, only available with python3.8+
             func: Optional[Callable] = None,
