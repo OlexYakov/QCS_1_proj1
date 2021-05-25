@@ -1,3 +1,4 @@
 pan*
 *.trail
 .pytest_cache/
+__pycache__
