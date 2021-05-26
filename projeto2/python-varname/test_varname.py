@@ -5,7 +5,7 @@ from varname.core import VarnameRetrievingError, varname
 from varname.utils import ImproperUseError, MultiTargetAssignmentWarning
 
 
-class TestVarName:
+class TestVarname:
 
     @pytest.mark.skip(reason="No input to varname will cause the needed exception to occur")
     def test_unable_error(self):
