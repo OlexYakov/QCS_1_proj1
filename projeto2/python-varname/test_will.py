@@ -3,7 +3,7 @@ from varname.core import VarnameRetrievingError, will
 from varname.utils import MultiTargetAssignmentWarning
 
 
-class TestVarName:
+class TestWill:
 
     @pytest.mark.skip(reason="No input to varname will cause the needed exception to occur")
     def test_path_1(self):
