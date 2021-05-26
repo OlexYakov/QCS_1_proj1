@@ -7,7 +7,7 @@ class TestVarName:
 
     @pytest.mark.skip(reason="No input to varname will cause the needed exception to occur")
     def test_path_1(self):
-        ''' 
+        '''
         To fail, an exception must occur within the ignore.get_frame method.
         Could not find a way to cause an exeption there.
         '''
@@ -16,9 +16,9 @@ class TestVarName:
 
     @pytest.mark.skip(reason="No input to varname will cause the needed exception to occur")
     def test_path_2(self):
-        ''' 
+        '''
         To fail, an exception must occur within the ignore.get_frame method.
-        This is effectivelly the same test as above, but instead of raising an exception the 
+        This is effectivelly the same test as above, but instead of raising an exception the
         function returns None
         Could not find a way to cause an exeption there.
         '''
@@ -34,13 +34,12 @@ class TestVarName:
         assert will(frame=3, raise_exc=False) is None
 
     def test_path_5(self):
-
         class AwesomeClass:
             def __init__(self):
                 self.will = None
 
             def permit(self):
-                self.will = will(frame=3)
+                self.will = will()
                 if self.will == 'do':
                     # let self handle do
                     return self
@@ -54,13 +53,10 @@ class TestVarName:
                 return 'I am doing!'
 
         awesome = AwesomeClass()
-        
-        #awesome.permit()
+        ret = awesome.permit().do()
+        assert ret == 'I am doing!'
+        assert awesome.will == 'do'
 
-        #with pytest.raises(VarnameRetrievingError, match="Function `will`"):
-        #    awesome.permit().do()
-        assert awesome.permit().do() == "I am doing!"
-        #assert will() is 
 
 if __name__ == "__main__":
     pytest.main()
