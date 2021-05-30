@@ -170,7 +170,7 @@ def will(frame: int = 1, raise_exc: bool = True) -> Optional[str]:
 
     Returns:
         The attribute name right after the function call
-        If there is no attribute attached and `raise_exc` is `False`
+        If there is no attribute attached and `raise_exc` is `False` returns None
 
     Raises:
         VarnameRetrievingError: When `raise_exc` is `True` and we failed to
