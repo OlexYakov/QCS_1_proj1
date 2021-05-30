@@ -15,6 +15,7 @@ class TestVarname:
         To fail, an exception must occur within the ignore.get_frame method.
         Could not find a way to cause an exeption there.
         '''
+
         with pytest.raises(VarnameRetrievingError, match="Unable to"):
             varname(frame=2)
 
@@ -90,7 +91,7 @@ class TestVarname:
 
     def test_multiple_assignment(self):
         '''
-        9. 1,2,4,7,9,13,14,15,16,17,18,19,21,23
+        9. [1,2,4,7,9,13,14,15,16,17,18,19,21,23]
         '''
         def foo():
             return varname()
