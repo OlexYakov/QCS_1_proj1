@@ -1,4 +1,4 @@
 from py2cfg import CFGBuilder
 
-cfg = CFGBuilder().build_from_file('temp', 'temp.py')
-cfg.build_visual('exampleCFG', 'pdf',)
+cfg = CFGBuilder().build_from_file('will', 'will.py')
+cfg.build_visual('will_cfg', 'pdf',)

@@ -6,7 +6,7 @@ from varname.utils import MultiTargetAssignmentWarning
 class TestWill:
 
     @pytest.mark.skip(reason="No input to varname will cause the needed exception to occur")
-    def test_path_1(self):
+    def test_unable_error(self):
         '''
         To fail, an exception must occur within the ignore.get_frame method.
         Could not find a way to cause an exeption there.
@@ -15,7 +15,7 @@ class TestWill:
             will(frame=2)
 
     @pytest.mark.skip(reason="No input to varname will cause the needed exception to occur")
-    def test_path_2(self):
+    def test_unable_error_no_raise(self):
         '''
         To fail, an exception must occur within the ignore.get_frame method.
         This is effectivelly the same test as above, but instead of raising an exception the
@@ -24,16 +24,25 @@ class TestWill:
         '''
         assert will(frame=2, raise_exc=False) is None
 
-    def test_path_3(self):
+    def test_function_error(self):
+        '''
+        For this test to pass, node mustn't be of the type attribute
+        '''
         # Its suposed to be used within another function (or use frame = 0 karg)
         with pytest.raises(VarnameRetrievingError, match="Function `will`"):
             will(frame=3)
 
-    def test_path_4(self):
+    def test_function_error_no_raise(self):
+        '''
+        For this test to pass, node mustn't be of the type attribute and raise_exc must be false
+        '''
         # Its suposed to be used within another function (or use frame = 0 karg)
         assert will(frame=3, raise_exc=False) is None
 
-    def test_path_5(self):
+    def test_normal(self):
+        '''
+        Main functionality of the function
+        '''
         class AwesomeClass:
             def __init__(self):
                 self.will = None
